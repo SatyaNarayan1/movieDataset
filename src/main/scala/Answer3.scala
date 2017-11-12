@@ -82,7 +82,7 @@ object Answer3 {
 
    val groupWindow = Window.partitionBy("OccupationString","AgeBucket","Gener").orderBy(col("AvgRating").desc)
 
-    movieGenerRatingDF.withColumn("Rank",rank().over(groupWindow)).show()
+    movieGenerRatingDF.withColumn("Rank",rank().over(groupWindow)).filter("Rank<=5").show()
 
     /*val top20MoviesByRating =ratingsDF.groupBy("MovieID").agg(avg("Rating").as("AvgRating")
     ,count("UserID").as("NoOfReviewers")).filter("NoOfReviewers>=40").orderBy(desc("AvgRating")).limit(20)
