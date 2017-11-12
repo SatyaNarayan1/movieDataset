@@ -78,11 +78,11 @@ object Answer3 {
 
     val movieGenerRatingDF = usersUpdatedDF.join(ratingsDF,"UserID").join(movieGenerDF,"MovieID").groupBy("OccupationString","AgeBucket","Gener").agg(avg("Ratings").as("AvgRating"))
 
+
     //movieGenerDF.select("Gener").distinct().show
 
-   val groupWindow = Window.partitionBy("OccupationString","AgeBucket","Gener").orderBy(col("AvgRating").desc)
-
-    movieGenerRatingDF.withColumn("Rank",dense_rank().over(groupWindow)).filter("Rank<=5").show(100)
+   val groupWindow = Window.partitionBy("OccupationString","AgeBucket").orderBy(col("AvgRating").desc)
+    movieGenerRatingDF.withColumn("Rank",rank().over(groupWindow)).filter("Rank<=5").show(100)
 
 
 
