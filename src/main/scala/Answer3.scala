@@ -63,7 +63,6 @@ object Answer3 {
       case x if x<50 => "45-49"
       case x if x<56 =>"50-55"
       case _ => "56+"
-
     }
     val ageBucketUDF = udf(ageBucket _)
 
@@ -82,8 +81,15 @@ object Answer3 {
     //movieGenerDF.select("Gener").distinct().show
 
    val groupWindow = Window.partitionBy("OccupationString","AgeBucket").orderBy(col("AvgRating").desc)
-    movieGenerRatingDF.withColumn("Rank",rank().over(groupWindow)).filter("Rank<=5").show(100)
+    val rankedDF = movieGenerRatingDF.withColumn("Rank",rank().over(groupWindow)).filter("Rank <=5")
 
+    val rankedUpdateDF = rankedDF.withColumn("Rank1",expr("case when Rank = 1 then Gener else '' end ").as("Rank1"))
+      .withColumn("Rank2",expr("case when Rank = 2 then Gener else '' end ").as("Rank2"))
+      .withColumn("Rank3",expr("case when Rank = 3 then Gener else '' end ").as("Rank3"))
+      .withColumn("Rank4",expr("case when Rank = 4 then Gener else '' end ").as("Rank4"))
+      .withColumn("Rank5",expr("case when Rank = 5 then Gener else '' end ").as("Rank5"))
+
+    rankedUpdateDF.groupBy("OccupationString","AgeBucket").agg(max("Rank1"),max("Rank2"),max("Rank3"),max("Rank4"),max("Rank5")).show
 
 
   }
