@@ -72,7 +72,7 @@ object Answer3 {
 
     usersUpdatedDF.printSchema()
 
-    usersUpdatedDF.groupBy("OccupationString","AgeBucket")
+
 
     val movieGenerDF = movieDF.withColumn("Gener",explode(split(movieDF("Geners"), "[|]")))
 
@@ -82,11 +82,9 @@ object Answer3 {
 
    val groupWindow = Window.partitionBy("OccupationString","AgeBucket","Gener").orderBy(col("AvgRating").desc)
 
-    movieGenerRatingDF.withColumn("Rank",rank().over(groupWindow)).filter("Rank<=5").show()
+    movieGenerRatingDF.withColumn("Rank",dense_rank().over(groupWindow)).filter("Rank<=5").show(100)
 
-    /*val top20MoviesByRating =ratingsDF.groupBy("MovieID").agg(avg("Rating").as("AvgRating")
-    ,count("UserID").as("NoOfReviewers")).filter("NoOfReviewers>=40").orderBy(desc("AvgRating")).limit(20)
-    top20MoviesByRating.join(movieDF,"MovieID").select("Title","AvgRating").show()*/
+
 
   }
 }
